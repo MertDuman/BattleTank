@@ -2,6 +2,7 @@
 
 #include "TankPlayerController.h"
 #include "Engine/World.h"
+#include "DrawDebugHelpers.h"
 
 ATankPlayerController::ATankPlayerController() {
 	CrosshairXLocation = 0.5f;
@@ -45,6 +46,8 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& out_HitLocation) {
 	GetViewportSize( ViewportSizeX, ViewportSizeY);
 	FVector2D AimDotLocation = FVector2D(ViewportSizeX * CrosshairXLocation, ViewportSizeY * CrosshairYLocation);
 
+	
+
 	UE_LOG(LogTemp, Warning, TEXT("AimDotLocation: %s"), *AimDotLocation.ToString());
 
 	// Deproject it to a world direction.
@@ -56,9 +59,31 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& out_HitLocation) {
 
 	// Line trace by channel
 	FHitResult HitResult;
-	
+
+	GetHitResultAtScreenPosition(
+		AimDotLocation,
+		ECollisionChannel::ECC_Pawn,
+		false,
+		HitResult
+	);
+
+	DrawDebugLine(
+		GetWorld(),
+		CameraWorldDirection + FVector( 0.f, 0.f, 100.f),
+		HitResult.ImpactPoint,
+		FColor::Blue,
+		false,
+		0.f,
+		0.f,
+		5.f
+	);
+
 	
 
+	if ( HitResult.GetActor() == nullptr) { return false;}
+	UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *HitResult.GetActor()->GetName());
+	
+	
 	return true;
 }
 
