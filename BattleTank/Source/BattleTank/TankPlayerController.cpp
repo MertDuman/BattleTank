@@ -2,6 +2,7 @@
 
 #include "TankPlayerController.h"
 #include "Engine/World.h"
+#include "Tank.h"
 #include "DrawDebugHelpers.h"
 
 ATankPlayerController::ATankPlayerController() {
@@ -29,7 +30,7 @@ void ATankPlayerController::AimTowardsCrosshair() {
 
 	FVector HitLocation;
 	if ( GetLineTraceHitLocation( HitLocation)) {
-		GetControlledTank()->AimAt( HitLocation);
+		GetControlledTank()->AimAt( HitLocation); //TODO Not doing anything when aiming at sky.
 	}
 }
 
