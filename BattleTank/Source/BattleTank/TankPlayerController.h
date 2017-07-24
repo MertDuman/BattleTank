@@ -39,5 +39,8 @@ private:
 	void AimTowardsCrosshair();
 
 	// Changes the HitLocation to match where the crosshair points at.
-	bool GetSightRayHitLocation( FVector& out_HitLocation);
+	bool GetLineTraceHitLocation( FVector& out_HitLocation);
+
+	// Hits the current object at SceneLocation based on the CollisionChannel
+	bool HitScanAtScreenPosition( FVector2D ScreenLocation, ECollisionChannel CollisionChannel, FHitResult& out_HitResult);
 };

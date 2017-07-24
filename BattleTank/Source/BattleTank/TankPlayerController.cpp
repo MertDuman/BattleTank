@@ -7,7 +7,7 @@
 ATankPlayerController::ATankPlayerController() {
 	CrosshairXLocation = 0.5f;
 	CrosshairYLocation = 0.275f;
-	LineTraceRange = 100000; // 10km
+	LineTraceRange = 1000000.f; // 10km
 }
 
 void ATankPlayerController::BeginPlay() {
@@ -24,52 +24,48 @@ void ATankPlayerController::Tick( float DeltaTime) {
 	AimTowardsCrosshair();
 }
 
-ATank* ATankPlayerController::GetControlledTank() const {
-	return Cast<ATank>( GetPawn());
-}
-
 void ATankPlayerController::AimTowardsCrosshair() {
 	if ( GetControlledTank() == nullptr) { return; }
 
 	FVector HitLocation;
-	if ( GetSightRayHitLocation( HitLocation)) {
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *HitLocation.ToString());
-		// Tell controlled tank to aim at this point
+	if ( GetLineTraceHitLocation( HitLocation)) {
+		GetControlledTank()->AimAt( HitLocation);
 	}
 }
 
 // Get world location with line trace through crosshair.
-bool ATankPlayerController::GetSightRayHitLocation(FVector& out_HitLocation) {
+bool ATankPlayerController::GetLineTraceHitLocation(FVector& out_HitLocation) {
 
 	// Find the crosshair position
 	int32 ViewportSizeX, ViewportSizeY;
 	GetViewportSize( ViewportSizeX, ViewportSizeY);
 	FVector2D AimDotLocation = FVector2D(ViewportSizeX * CrosshairXLocation, ViewportSizeY * CrosshairYLocation);
 
-	
-
-	UE_LOG(LogTemp, Warning, TEXT("AimDotLocation: %s"), *AimDotLocation.ToString());
-
 	// Deproject it to a world direction.
 	FVector CameraWorldLocation;
 	FVector CameraWorldDirection;
-	DeprojectScreenPositionToWorld( AimDotLocation.X, AimDotLocation.Y, CameraWorldLocation, CameraWorldDirection);
-
-	UE_LOG( LogTemp, Warning, TEXT("Direction: %s"), *CameraWorldDirection.ToString());
-
-	// Line trace by channel
-	FHitResult HitResult;
-
-	GetHitResultAtScreenPosition(
-		AimDotLocation,
-		ECollisionChannel::ECC_Pawn,
-		false,
-		HitResult
+	DeprojectScreenPositionToWorld( 
+		AimDotLocation.X, 
+		AimDotLocation.Y, 
+		CameraWorldLocation, 
+		CameraWorldDirection
 	);
 
+	// Line trace to find the first visible blocking hit.
+	FHitResult HitResult;
+
+	bool HitFound = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		CameraWorldLocation,
+		CameraWorldLocation + (CameraWorldDirection * LineTraceRange),
+		ECollisionChannel::ECC_Visibility,
+		FCollisionQueryParams( "", false, GetPawn())
+	);
+
+	// Debug Line
 	DrawDebugLine(
 		GetWorld(),
-		CameraWorldDirection + FVector( 0.f, 0.f, 100.f),
+		CameraWorldLocation,
 		HitResult.ImpactPoint,
 		FColor::Blue,
 		false,
@@ -78,13 +74,34 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& out_HitLocation) {
 		5.f
 	);
 
-	
+	if ( !HitFound) { 
+		out_HitLocation = FVector( 0.f);
+		return false; 
+	}
+	out_HitLocation = HitResult.Location;
 
-	if ( HitResult.GetActor() == nullptr) { return false;}
 	UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *HitResult.GetActor()->GetName());
-	
-	
+
 	return true;
+}
+
+bool ATankPlayerController::HitScanAtScreenPosition( FVector2D ScreenLocation, ECollisionChannel CollisionChannel, FHitResult& out_HitResult) {
+	GetHitResultAtScreenPosition(
+		ScreenLocation,
+		CollisionChannel,
+		false,
+		out_HitResult
+	);
+
+	if ( out_HitResult.GetActor() == nullptr) {
+		return false;
+	}
+
+	return true;
+}
+
+ATank* ATankPlayerController::GetControlledTank() const {
+	return Cast<ATank>(GetPawn());
 }
 
 
