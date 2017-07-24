@@ -63,7 +63,7 @@ bool ATankPlayerController::GetLineTraceHitLocation(FVector& out_HitLocation) {
 	);
 
 	// Debug Line
-	DrawDebugLine(
+	/*DrawDebugLine(
 		GetWorld(),
 		CameraWorldLocation,
 		HitResult.ImpactPoint,
@@ -72,7 +72,7 @@ bool ATankPlayerController::GetLineTraceHitLocation(FVector& out_HitLocation) {
 		0.f,
 		0.f,
 		5.f
-	);
+	);*/
 
 	if ( !HitFound) { 
 		out_HitLocation = FVector( 0.f);

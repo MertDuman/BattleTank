@@ -2,6 +2,7 @@
 
 #include "TankAimingComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Tank.h"
 
 
@@ -32,14 +33,50 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
-void UTankAimingComponent::AimAt(FVector HitLocation) {
-	FString CurrentTankName = GetOwner()->GetName();
-	FVector BarrelLocation = Barrel->GetComponentLocation();
-	UE_LOG(LogTemp, Warning, TEXT("%s aiming at %s from %s"), *CurrentTankName, *HitLocation.ToString(), *BarrelLocation.ToString());
+void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed) {
+	if ( Barrel == nullptr) { return; }
+
+	FVector LaunchVelocity;
+	FVector StartLocation = Barrel->GetSocketLocation(FName("Projectile"));
+
+	// Gets a velocity vector to see where to aim at.
+	UGameplayStatics::SuggestProjectileVelocity(
+		this,
+		LaunchVelocity,
+		StartLocation,
+		HitLocation,
+		LaunchSpeed,
+		false,
+		0.f,
+		0.f,
+		ESuggestProjVelocityTraceOption::DoNotTrace
+	);
+
+	FVector AimDirection = LaunchVelocity.GetSafeNormal();
+
+	//UE_LOG(LogTemp, Warning, TEXT("Velocity: %s"), *AimDirection.ToString())
+	MoveBarrelTowards( AimDirection);
+}
+
+void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection) {
+	// AimDirection is a unit vector which tells us where to point at.
+	// Calculate the difference between the barrel's rotation and AimDirection.
+	// Move the barrel accordingly.
+
+	
+	FRotator BarrelRotator = Barrel->GetComponentRotation();
+	FRotator AimAsRotator = AimDirection.Rotation();
+	UE_LOG(LogTemp, Warning, TEXT("BarrelRotator: %s"), *BarrelRotator.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("AimAsRotator: %s"), *AimAsRotator.ToString());
+	
+	
 }
 
 void UTankAimingComponent::SetBarrelReference(UStaticMeshComponent * BarrelToSet) {
 	Barrel = BarrelToSet;
-	UE_LOG(LogTemp, Error, TEXT("Barrel Set."));
+}
+
+void UTankAimingComponent::SetTurretReference(UStaticMeshComponent * TurretToSet) {
+	Turret = TurretToSet;
 }
 

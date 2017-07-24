@@ -27,13 +27,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Setup)
 	void SetBarrelReference( UStaticMeshComponent* BarrelToSet);
 
+	UFUNCTION(BlueprintCallable, Category = Setup)
+	void SetTurretReference(UStaticMeshComponent* TurretToSet);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
-private:	
+private:
+	
+	UPROPERTY(EditAnywhere, Category = Firing)
+	float LaunchSpeed = 100000;
 	
 
 	
