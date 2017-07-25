@@ -23,8 +23,8 @@ protected:
 private:
 	virtual void Tick( float DeltaTime) override;
 
-	ATank* GetAIControlledTank() const;
+	ATank* AITank;
 
-	ATank* GetPlayerControlledTank() const;
-	
+	ATank* PlayerTank;
+
 };
