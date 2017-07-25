@@ -66,7 +66,7 @@ bool ATankPlayerController::GetLineTraceHitLocation(FVector& out_HitLocation) {
 	// Debug Line
 	/*DrawDebugLine(
 		GetWorld(),
-		CameraWorldLocation,
+		AimDotWorldLocation,
 		HitResult.ImpactPoint,
 		FColor::Blue,
 		false,
@@ -81,20 +81,18 @@ bool ATankPlayerController::GetLineTraceHitLocation(FVector& out_HitLocation) {
 	}
 	out_HitLocation = HitResult.Location;
 
-	UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *HitResult.GetActor()->GetName());
-
 	return true;
 }
 
 bool ATankPlayerController::HitScanAtScreenPosition( FVector2D ScreenLocation, ECollisionChannel CollisionChannel, FHitResult& out_HitResult) {
-	GetHitResultAtScreenPosition(
+	bool HitFound = GetHitResultAtScreenPosition(
 		ScreenLocation,
 		CollisionChannel,
 		false,
 		out_HitResult
 	);
 
-	if ( out_HitResult.GetActor() == nullptr) {
+	if ( !HitFound) {
 		return false;
 	}
 

@@ -15,7 +15,7 @@ UTankAimingComponent::UTankAimingComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
@@ -82,17 +82,12 @@ void UTankAimingComponent::MoveTurretTowards(FVector AimDirection) {
 	FRotator AimAsRotator = AimDirection.Rotation();
 	FRotator DeltaRotator = AimAsRotator - TurretRotator;
 
-	if (GetOwner()->GetName() != GetWorld()->GetFirstPlayerController()->GetPawn()->GetName()) {
-		UE_LOG(LogTemp, Warning, TEXT("Turret: %s\n\tAim: %s\n\tDelta: %s"), *TurretRotator.ToString(), *AimAsRotator.ToString(), *DeltaRotator.ToString());
-	}
-
 	if ( DeltaRotator.Yaw < 180.f && DeltaRotator.Yaw > -180.f) {
 		Turret->Move(DeltaRotator.Yaw);
 	} else {
 		Turret->Move(-DeltaRotator.Yaw);
 	}
 	
-
 }
 
 void UTankAimingComponent::SetBarrelReference(UTankBarrel * BarrelToSet) {

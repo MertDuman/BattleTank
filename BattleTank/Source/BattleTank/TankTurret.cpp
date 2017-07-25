@@ -4,7 +4,7 @@
 #include "Engine/World.h"
 
 UTankTurret::UTankTurret() {
-	MaxTurnSpeedDegrees = 5.f;
+	MaxTurnSpeedDegrees = 30.f;
 }
 
 void UTankTurret::Move(float RelativeSpeed) {

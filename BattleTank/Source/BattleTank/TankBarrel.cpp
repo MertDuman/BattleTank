@@ -5,7 +5,7 @@
 
 
 UTankBarrel::UTankBarrel() {
-	MaxDegreesPerSecond = 20.f;
+	MaxDegreesPerSecond = 10.f;
 	MaxElevationDegrees = 40.f;
 	MinElevationDegrees = 0.f;
 }
