@@ -12,6 +12,8 @@ ATank::ATank()
 
 	// Adding a Component to the Tank object from C++ code instead of Blueprint.
 	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(FName("Aiming Component"));
+
+	LaunchSpeed = 10000;
 }
 
 // Called when the game starts or when spawned
@@ -25,7 +27,6 @@ void ATank::BeginPlay()
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void ATank::AimAt(FVector HitLocation) {
@@ -36,7 +37,7 @@ void ATank::SetBarrelReference( UTankBarrel * BarrelToSet) {
 	TankAimingComponent->SetBarrelReference( BarrelToSet);
 }
 
-void ATank::SetTurretReference(UStaticMeshComponent * TurretToSet) {
+void ATank::SetTurretReference( UTankTurret * TurretToSet) {
 	TankAimingComponent->SetTurretReference( TurretToSet);
 }
 

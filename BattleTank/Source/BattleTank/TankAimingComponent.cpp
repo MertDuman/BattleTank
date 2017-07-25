@@ -4,8 +4,10 @@
 #include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "TankBarrel.h"
+#include "TankTurret.h"
 #include "Tank.h"
 #include "Engine/World.h"
+#include "GameFramework/PlayerController.h"
 
 
 // Sets default values for this component's properties
@@ -37,6 +39,7 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed) {
 	if ( Barrel == nullptr) { return; }
+	if ( Turret == nullptr) { return; }
 
 	FVector LaunchVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("Projectile"));
@@ -56,36 +59,47 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed) {
 
 	FVector AimDirection = LaunchVelocity.GetSafeNormal();
 	float Time = GetWorld()->GetTimeSeconds();
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
 
 	if ( AimLocationFound) {
-		UE_LOG( LogTemp, Warning, TEXT( "%f Aim Loc Found"), Time);
-		//MoveBarrelTowards(AimDirection);
-	} else {
-		UE_LOG(LogTemp, Warning, TEXT("%f Aim Loc NOT Found"), Time);
+		//UE_LOG( LogTemp, Warning, TEXT( "Time: %f, DeltaTime: %f"), Time, DeltaTime);
+		MoveBarrelTowards(AimDirection);
+		MoveTurretTowards(AimDirection);
 	}
 	
 }
 
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection) {
-	// AimDirection is a unit vector which tells us where to point at.
-	// Calculate the difference between the barrel's rotation and AimDirection.
-	// Move the barrel accordingly.
-
-	
 	FRotator BarrelRotator = Barrel->GetComponentRotation();
 	FRotator AimAsRotator = AimDirection.Rotation();
 	FRotator DeltaRotator = AimAsRotator - BarrelRotator;
-	//UE_LOG(LogTemp, Warning, TEXT("BarrelRotator: %s"), *BarrelRotator.ToString());
-	UE_LOG(LogTemp, Warning, TEXT("AimAsRotator: %s"), *AimAsRotator.ToString());
 	
-	Barrel->Elevate(5);
+	Barrel->Elevate(DeltaRotator.Pitch);
+}
+
+void UTankAimingComponent::MoveTurretTowards(FVector AimDirection) {
+	FRotator TurretRotator = Turret->GetComponentRotation();
+	FRotator AimAsRotator = AimDirection.Rotation();
+	FRotator DeltaRotator = AimAsRotator - TurretRotator;
+
+	if (GetOwner()->GetName() != GetWorld()->GetFirstPlayerController()->GetPawn()->GetName()) {
+		UE_LOG(LogTemp, Warning, TEXT("Turret: %s\n\tAim: %s\n\tDelta: %s"), *TurretRotator.ToString(), *AimAsRotator.ToString(), *DeltaRotator.ToString());
+	}
+
+	if ( DeltaRotator.Yaw < 180.f && DeltaRotator.Yaw > -180.f) {
+		Turret->Move(DeltaRotator.Yaw);
+	} else {
+		Turret->Move(-DeltaRotator.Yaw);
+	}
+	
+
 }
 
 void UTankAimingComponent::SetBarrelReference(UTankBarrel * BarrelToSet) {
 	Barrel = BarrelToSet;
 }
 
-void UTankAimingComponent::SetTurretReference(UStaticMeshComponent * TurretToSet) {
+void UTankAimingComponent::SetTurretReference( UTankTurret * TurretToSet) {
 	Turret = TurretToSet;
 }
 

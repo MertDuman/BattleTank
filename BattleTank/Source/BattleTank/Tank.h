@@ -7,6 +7,7 @@
 #include "Tank.generated.h"
 
 class UTankBarrel; /// Forward Decleration
+class UTankTurret;
 class UTankAimingComponent;
 
 UCLASS()
@@ -27,7 +28,7 @@ public:
 	void SetBarrelReference( UTankBarrel* BarrelToSet);
 
 	UFUNCTION(BlueprintCallable, Category = Setup)
-	void SetTurretReference(UStaticMeshComponent* TurretToSet);
+	void SetTurretReference( UTankTurret* TurretToSet);
 
 protected:
 	// Called when the game starts or when spawned
@@ -38,9 +39,6 @@ protected:
 private:
 	
 	UPROPERTY(EditAnywhere, Category = Firing)
-	float LaunchSpeed = 100000;
-	
-
-	
+	float LaunchSpeed;
 	
 };

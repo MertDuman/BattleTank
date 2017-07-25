@@ -17,7 +17,8 @@ class BATTLETANK_API UTankBarrel : public UStaticMeshComponent
 public:
 	UTankBarrel();
 
-	void Elevate( float DegreesPerSecond);
+	// -1 for min and +1 for max
+	void Elevate( float RelativeSpeed);
 
 private:
 	/// Default values are in constructor

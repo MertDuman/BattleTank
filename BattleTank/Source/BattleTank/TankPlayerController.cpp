@@ -43,13 +43,13 @@ bool ATankPlayerController::GetLineTraceHitLocation(FVector& out_HitLocation) {
 	FVector2D AimDotLocation = FVector2D(ViewportSizeX * CrosshairXLocation, ViewportSizeY * CrosshairYLocation);
 
 	// Deproject it to a world direction.
-	FVector CameraWorldLocation;
-	FVector CameraWorldDirection;
+	FVector AimDotWorldLocation;
+	FVector AimDotWorldDirection;
 	DeprojectScreenPositionToWorld( 
 		AimDotLocation.X, 
 		AimDotLocation.Y, 
-		CameraWorldLocation, 
-		CameraWorldDirection
+		AimDotWorldLocation, 
+		AimDotWorldDirection
 	);
 
 	// Line trace to find the first visible blocking hit.
@@ -57,8 +57,8 @@ bool ATankPlayerController::GetLineTraceHitLocation(FVector& out_HitLocation) {
 
 	bool HitFound = GetWorld()->LineTraceSingleByChannel(
 		HitResult,
-		CameraWorldLocation,
-		CameraWorldLocation + (CameraWorldDirection * LineTraceRange),
+		AimDotWorldLocation,
+		AimDotWorldLocation + (AimDotWorldDirection * LineTraceRange),
 		ECollisionChannel::ECC_Visibility,
 		FCollisionQueryParams( "", false, GetPawn())
 	);
