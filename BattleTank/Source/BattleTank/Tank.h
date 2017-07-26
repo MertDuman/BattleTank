@@ -38,20 +38,25 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// UPROPERTY(EditDefaultsOnly) or UPROPERTY(EditAnywhere) to make it editable in BP
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
 private:
-	UPROPERTY(EditAnywhere, Category = Firing)
-	float LaunchSpeed;
 
 	UPROPERTY(EditAnywhere, Category = Setup)
 	TSubclassOf<AProjectile> ProjectileBlueprint;
 
-	// Local barrel reference for spawning projectile
-	UTankBarrel* Barrel;
+	UPROPERTY(EditAnywhere, Category = Firing)
+	float LaunchSpeed;
 
+	UPROPERTY(EditAnywhere, Category = Firing)
 	float ReloadSpeedInSeconds;
 
 	float LastFireTime;
+
+	// Local barrel reference for spawning projectile
+	UTankBarrel* Barrel;
+
+	
 	
 };

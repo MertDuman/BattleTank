@@ -18,13 +18,14 @@ ATank::ATank()
 
 	LaunchSpeed = 10000;
 	ReloadSpeedInSeconds = 2.f;
-	LastFireTime = -2.f;
 }
 
 // Called when the game starts or when spawned
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
+
+	LastFireTime = -ReloadSpeedInSeconds;
 	
 }
 
