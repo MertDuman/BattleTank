@@ -16,7 +16,6 @@ void ATankPlayerController::BeginPlay() {
 
 	ATank* Tank = GetControlledTank();
 	if (Tank == nullptr) {	return; }
-	UE_LOG(LogTemp, Warning, TEXT("Player possessed Tank: %s"), *Tank->GetName());
 }
 
 void ATankPlayerController::Tick( float DeltaTime) {

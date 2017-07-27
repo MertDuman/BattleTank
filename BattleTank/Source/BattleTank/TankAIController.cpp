@@ -11,7 +11,6 @@ void ATankAIController::BeginPlay() {
 
 	PlayerTank = Cast<ATank>( GetWorld()->GetFirstPlayerController()->GetPawn());
 	AITank = Cast<ATank>( GetPawn());
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *PlayerTank->GetName())
 }
 
 void ATankAIController::Tick(float DeltaTime) {

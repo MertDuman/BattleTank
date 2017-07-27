@@ -7,7 +7,7 @@
 #include "TankTrack.generated.h"
 
 /**
- * 
+ * Sets the throttles on themselves and stores a max driving force.
  */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BATTLETANK_API UTankTrack : public UStaticMeshComponent

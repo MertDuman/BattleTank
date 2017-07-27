@@ -7,7 +7,7 @@
 #include "TankBarrel.generated.h"
 
 /**
- * 
+ * UTankBarrel is responsible for its own elevation. Stores max elevation speeds and degrees.
  */
 UCLASS(ClassGroup = (Custom), meta=(BlueprintSpawnableComponent))
 class BATTLETANK_API UTankBarrel : public UStaticMeshComponent
