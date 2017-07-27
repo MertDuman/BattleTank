@@ -6,6 +6,10 @@
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 
+ATankAIController::ATankAIController() {
+	AcceptanceRadius = 3000;
+}
+
 void ATankAIController::BeginPlay() {
 	Super::BeginPlay();
 
@@ -17,6 +21,10 @@ void ATankAIController::Tick(float DeltaTime) {
 	Super::Tick( DeltaTime);
 
 	if ( PlayerTank != nullptr) {
+		// Move towards player
+		MoveToActor( PlayerTank, AcceptanceRadius); // there is more to this method, but the defaults are fine
+
+		// Aim and fire towards the player
 		AITank->AimAt(PlayerTank->GetActorLocation());
 		AITank->Fire();
 	}

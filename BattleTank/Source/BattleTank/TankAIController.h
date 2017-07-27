@@ -14,7 +14,7 @@ class BATTLETANK_API ATankAIController : public AAIController
 	GENERATED_BODY()
 
 public:
-	
+	ATankAIController();
 
 protected:
 	virtual void BeginPlay() override;
@@ -26,5 +26,9 @@ private:
 	ATank* AITank;
 
 	ATank* PlayerTank;
+
+	// How close the AI tank can get.
+	UPROPERTY(EditDefaultsOnly)
+	float AcceptanceRadius;
 
 };
