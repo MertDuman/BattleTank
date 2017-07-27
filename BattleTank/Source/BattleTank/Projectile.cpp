@@ -12,6 +12,7 @@ AProjectile::AProjectile()
 
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(FName("Projectile Movement"));
 	MovementComponent->bAutoActivate = false;
+	MovementComponent->bRotationFollowsVelocity = true;
 }
 
 // Called when the game starts or when spawned
