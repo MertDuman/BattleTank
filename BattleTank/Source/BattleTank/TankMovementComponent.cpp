@@ -2,6 +2,7 @@
 
 #include "TankMovementComponent.h"
 #include "TankTrack.h"
+#include "GameFramework/Actor.h"
 
 
 UTankMovementComponent::UTankMovementComponent() {
@@ -27,8 +28,17 @@ void UTankMovementComponent::IntendTurnRight(float Throw) {
 
 void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, bool bForceMaxSpeed) {
 	// No need to call super
-	Super::RequestDirectMove( MoveVelocity, bForceMaxSpeed); // TODO Comment this out don't need it.
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *MoveVelocity.ToString());
-	
+	FVector AITankForwardLoc = GetOwner()->GetActorForwardVector().GetSafeNormal();
+	FVector AITankMovementLoc = MoveVelocity.GetSafeNormal();
 
+	// Gives us the cosine value since other vectors are of length 1.
+	float CosineValue = FVector::DotProduct( AITankForwardLoc, AITankMovementLoc);
+
+	// CrossProductResult.Z gives us the sign of sine since other vectors are of length 1.
+	FVector CrossProductResult = FVector::CrossProduct( AITankForwardLoc, AITankMovementLoc);
+
+	IntendMoveForward(CosineValue);
+	IntendTurnRight(CrossProductResult.Z);
+
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *MoveVelocity.ToString());
 }
