@@ -29,12 +29,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Firing)
 	void Fire();
 
-	UFUNCTION(BlueprintCallable, Category = Setup)
-	void SetBarrelReference( UTankBarrel* BarrelToSet);
-
-	UFUNCTION(BlueprintCallable, Category = Setup)
-	void SetTurretReference( UTankTurret* TurretToSet);
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -57,7 +51,4 @@ private:
 
 	// Local barrel reference for spawning projectile
 	UTankBarrel* Barrel;
-
-	
-	
 };

@@ -14,9 +14,6 @@ ATank::ATank()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	// Adding a Component to the Tank object from C++ code instead of Blueprint.
-	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(FName("Aiming Component"));
-
 	LaunchSpeed = 10000;
 	ReloadSpeedInSeconds = 2.f;
 }
@@ -27,7 +24,8 @@ void ATank::BeginPlay()
 	Super::BeginPlay();
 
 	LastFireTime = -ReloadSpeedInSeconds;
-	
+
+	//TankAimingComponent = GetOwner()->FindComponentByClass<UTankAimingComponent>(); CRASHES
 }
 
 // Called to bind functionality to input
@@ -37,6 +35,8 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 }
 
 void ATank::AimAt(FVector HitLocation) {
+	if (TankAimingComponent == nullptr) { return; }
+
 	TankAimingComponent->AimAt(HitLocation, LaunchSpeed);
 }
 
@@ -56,14 +56,5 @@ void ATank::Fire() {
 		LastFireTime = GetWorld()->GetTimeSeconds();
 	}
 	
-}
-
-void ATank::SetBarrelReference( UTankBarrel * BarrelToSet) {
-	Barrel = BarrelToSet;
-	TankAimingComponent->SetBarrelReference( BarrelToSet);
-}
-
-void ATank::SetTurretReference( UTankTurret * TurretToSet) {
-	TankAimingComponent->SetTurretReference( TurretToSet);
 }
 

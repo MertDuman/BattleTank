@@ -62,7 +62,6 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed) {
 	float DeltaTime = GetWorld()->GetDeltaSeconds();
 
 	if ( AimLocationFound) {
-		//UE_LOG( LogTemp, Warning, TEXT( "Time: %f, DeltaTime: %f"), Time, DeltaTime);
 		MoveBarrelTowards(AimDirection);
 		MoveTurretTowards(AimDirection);
 	}
@@ -70,6 +69,8 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed) {
 }
 
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection) {
+	if (Barrel == nullptr) { return; }
+
 	FRotator BarrelRotator = Barrel->GetComponentRotation();
 	FRotator AimAsRotator = AimDirection.Rotation();
 	FRotator DeltaRotator = AimAsRotator - BarrelRotator;
@@ -78,6 +79,8 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection) {
 }
 
 void UTankAimingComponent::MoveTurretTowards(FVector AimDirection) {
+	if (Turret == nullptr) { return; }
+
 	FRotator TurretRotator = Turret->GetComponentRotation();
 	FRotator AimAsRotator = AimDirection.Rotation();
 	FRotator DeltaRotator = AimAsRotator - TurretRotator;
@@ -90,11 +93,8 @@ void UTankAimingComponent::MoveTurretTowards(FVector AimDirection) {
 	
 }
 
-void UTankAimingComponent::SetBarrelReference(UTankBarrel * BarrelToSet) {
+void UTankAimingComponent::Initialize(UTankBarrel * BarrelToSet, UTankTurret * TurretToSet) {
 	Barrel = BarrelToSet;
-}
-
-void UTankAimingComponent::SetTurretReference( UTankTurret * TurretToSet) {
 	Turret = TurretToSet;
 }
 
