@@ -19,10 +19,11 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintCallable, Category = Setup)
+	ATank* GetControlledTank() const;
+
 private:
 	virtual void Tick( float DeltaTime) override;
-
-	ATank* GetControlledTank() const;
 
 	UPROPERTY(EditAnywhere)
 	float CrosshairXLocation;
