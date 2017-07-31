@@ -3,6 +3,7 @@
 #include "TankPlayerController.h"
 #include "Engine/World.h"
 #include "Tank.h"
+#include "TankAimingComponent.h"
 #include "DrawDebugHelpers.h"
 
 ATankPlayerController::ATankPlayerController() {
@@ -29,8 +30,8 @@ void ATankPlayerController::AimTowardsCrosshair() {
 
 	FVector HitLocation;
 	if ( GetLineTraceHitLocation( HitLocation)) {
-		GetControlledTank()->AimAt( HitLocation); //TODO Not doing anything when aiming at sky.
-	}
+		GetControlledTank()->GetAimingComponent()->AimAt( HitLocation, 10000); //TODO Not doing anything when aiming at sky.
+	} // TODO Fix the magic number LaunchSpeed
 }
 
 // Get world location with line trace through crosshair.
