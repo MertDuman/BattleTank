@@ -38,8 +38,8 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 }
 
 void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed) {
-	if ( Barrel == nullptr) { return; }
-	if ( Turret == nullptr) { return; }
+	if ( !ensure(Barrel)) { return; }
+	if ( !ensure(Turret)) { return; }
 
 	FVector LaunchVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("Projectile"));
@@ -69,7 +69,7 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed) {
 }
 
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection) {
-	if (Barrel == nullptr) { return; }
+	if ( !ensure(Barrel)) { return; }
 
 	FRotator BarrelRotator = Barrel->GetComponentRotation();
 	FRotator AimAsRotator = AimDirection.Rotation();
@@ -79,7 +79,7 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection) {
 }
 
 void UTankAimingComponent::MoveTurretTowards(FVector AimDirection) {
-	if (Turret == nullptr) { return; }
+	if ( !ensure(Turret)) { return; }
 
 	FRotator TurretRotator = Turret->GetComponentRotation();
 	FRotator AimAsRotator = AimDirection.Rotation();

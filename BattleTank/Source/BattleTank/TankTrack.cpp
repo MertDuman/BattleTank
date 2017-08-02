@@ -18,5 +18,4 @@ void UTankTrack::SetThrottle(float Throttle) {
 	TankRoot->AddForceAtLocation( ForceApplied, ForceLocation);
 	float TankSpeed = TankRoot->GetComponentVelocity().Size();
 	float Time = GetWorld()->GetTimeSeconds();
-	UE_LOG(LogTemp, Warning, TEXT("%f: Speed: %f"), Time, TankSpeed)
 }

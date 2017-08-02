@@ -24,8 +24,6 @@ void ATank::BeginPlay()
 	Super::BeginPlay();
 
 	LastFireTime = -ReloadSpeedInSeconds;
-
-	TankAimingComponent = FindComponentByClass<UTankAimingComponent>();
 }
 
 // Called to bind functionality to input
@@ -35,7 +33,7 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 }
 
 void ATank::Fire() {
-	if (Barrel == nullptr) { return; }
+	if ( !ensure(Barrel)) { return; }
 
 	if (GetWorld()->GetTimeSeconds() - LastFireTime > ReloadSpeedInSeconds) {
 		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
@@ -44,14 +42,10 @@ void ATank::Fire() {
 			Barrel->GetSocketRotation(FName("Projectile"))
 			);
 
-		if (Projectile == nullptr) { return; }
+		if ( !ensure(Projectile)) { return; }
 		Projectile->Launch(LaunchSpeed);
 
 		LastFireTime = GetWorld()->GetTimeSeconds();
 	}
-}
-
-UTankAimingComponent* ATank::GetAimingComponent() {
-	return TankAimingComponent;
 }
 

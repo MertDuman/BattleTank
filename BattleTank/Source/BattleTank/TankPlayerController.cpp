@@ -15,8 +15,9 @@ ATankPlayerController::ATankPlayerController() {
 void ATankPlayerController::BeginPlay() {
 	Super::BeginPlay();
 
-	ATank* Tank = GetControlledTank();
-	if (Tank == nullptr) {	return; }
+	if ( !ensure(GetControlledTank())) { return; }
+
+	FoundAimingComponent( GetControlledTank()->FindComponentByClass<UTankAimingComponent>());
 }
 
 void ATankPlayerController::Tick( float DeltaTime) {
@@ -26,11 +27,11 @@ void ATankPlayerController::Tick( float DeltaTime) {
 }
 
 void ATankPlayerController::AimTowardsCrosshair() {
-	if ( GetControlledTank() == nullptr) { return; }
+	if ( !ensure(GetControlledTank())) { return; }
 
 	FVector HitLocation;
 	if ( GetLineTraceHitLocation( HitLocation)) {
-		GetControlledTank()->GetAimingComponent()->AimAt( HitLocation, 10000); //TODO Not doing anything when aiming at sky.
+		GetControlledTank()->FindComponentByClass<UTankAimingComponent>()->AimAt( HitLocation, 10000); //TODO Not doing anything when aiming at sky.
 	} // TODO Fix the magic number LaunchSpeed
 }
 

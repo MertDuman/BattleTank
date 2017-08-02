@@ -27,14 +27,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Firing)
 	void Fire();
 
-	UTankAimingComponent* GetAimingComponent();
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	UPROPERTY(BlueprintReadOnly)
-	UTankAimingComponent* TankAimingComponent = nullptr;
 
 private:
 
@@ -50,5 +45,5 @@ private:
 	float LastFireTime;
 
 	// Local barrel reference for spawning projectile
-	UTankBarrel* Barrel;
+	UTankBarrel* Barrel = nullptr;
 };
