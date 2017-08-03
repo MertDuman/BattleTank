@@ -24,6 +24,8 @@ void ATankPlayerController::Tick( float DeltaTime) {
 }
 
 void ATankPlayerController::AimTowardsCrosshair() {
+	if (!GetPawn()) { return; } // e.g not possessing
+
 	FHitResult HitResult;
 	if ( GetLineTraceHitLocation( HitResult)) {
 		GetPawn()->FindComponentByClass<UTankAimingComponent>()->AimAt( HitResult); //TODO Not doing anything when aiming at sky.
@@ -69,7 +71,6 @@ bool ATankPlayerController::GetLineTraceHitLocation(FHitResult& out_HitResult) {
 		5.f
 	);*/
 
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *out_HitResult.ToString())
 	if ( !HitFound) { 
 		return false; 
 	}
