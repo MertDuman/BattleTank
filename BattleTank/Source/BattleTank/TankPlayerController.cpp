@@ -2,7 +2,6 @@
 
 #include "TankPlayerController.h"
 #include "Engine/World.h"
-#include "Tank.h"
 #include "TankAimingComponent.h"
 #include "DrawDebugHelpers.h"
 
@@ -15,9 +14,7 @@ ATankPlayerController::ATankPlayerController() {
 void ATankPlayerController::BeginPlay() {
 	Super::BeginPlay();
 
-	if ( !ensure(GetControlledTank())) { return; }
-
-	FoundAimingComponent( GetControlledTank()->FindComponentByClass<UTankAimingComponent>());
+	FoundAimingComponent( GetPawn()->FindComponentByClass<UTankAimingComponent>());
 }
 
 void ATankPlayerController::Tick( float DeltaTime) {
@@ -27,16 +24,14 @@ void ATankPlayerController::Tick( float DeltaTime) {
 }
 
 void ATankPlayerController::AimTowardsCrosshair() {
-	if ( !ensure(GetControlledTank())) { return; }
-
-	FVector HitLocation;
-	if ( GetLineTraceHitLocation( HitLocation)) {
-		GetControlledTank()->FindComponentByClass<UTankAimingComponent>()->AimAt( HitLocation, 10000); //TODO Not doing anything when aiming at sky.
-	} // TODO Fix the magic number LaunchSpeed
+	FHitResult HitResult;
+	if ( GetLineTraceHitLocation( HitResult)) {
+		GetPawn()->FindComponentByClass<UTankAimingComponent>()->AimAt( HitResult); //TODO Not doing anything when aiming at sky.
+	}
 }
 
 // Get world location with line trace through crosshair.
-bool ATankPlayerController::GetLineTraceHitLocation(FVector& out_HitLocation) {
+bool ATankPlayerController::GetLineTraceHitLocation(FHitResult& out_HitResult) {
 
 	// Find the crosshair position
 	int32 ViewportSizeX, ViewportSizeY;
@@ -54,10 +49,8 @@ bool ATankPlayerController::GetLineTraceHitLocation(FVector& out_HitLocation) {
 	);
 
 	// Line trace to find the first visible blocking hit.
-	FHitResult HitResult;
-
 	bool HitFound = GetWorld()->LineTraceSingleByChannel(
-		HitResult,
+		out_HitResult,
 		AimDotWorldLocation,
 		AimDotWorldLocation + (AimDotWorldDirection * LineTraceRange),
 		ECollisionChannel::ECC_Visibility,
@@ -76,11 +69,10 @@ bool ATankPlayerController::GetLineTraceHitLocation(FVector& out_HitLocation) {
 		5.f
 	);*/
 
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *out_HitResult.ToString())
 	if ( !HitFound) { 
-		out_HitLocation = FVector( 0.f);
 		return false; 
 	}
-	out_HitLocation = HitResult.Location;
 
 	return true;
 }
@@ -98,10 +90,6 @@ bool ATankPlayerController::HitScanAtScreenPosition( FVector2D ScreenLocation, E
 	}
 
 	return true;
-}
-
-ATank* ATankPlayerController::GetControlledTank() const {
-	return Cast<ATank>(GetPawn());
 }
 
 

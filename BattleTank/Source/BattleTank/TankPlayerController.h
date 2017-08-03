@@ -6,7 +6,6 @@
 #include "GameFramework/PlayerController.h"
 #include "TankPlayerController.generated.h"
 
-class ATank;
 class UTankAimingComponent;
 
 UCLASS()
@@ -19,9 +18,6 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
-	UFUNCTION(BlueprintCallable, Category = Setup)
-	ATank* GetControlledTank() const;
 
 	// Can't use MULTICAST_DELEGATE becauuse that only works for Actors. Also no need for implementation because of the macro.
 	UFUNCTION(BlueprintImplementableEvent, Category = Setup)
@@ -43,7 +39,7 @@ private:
 	void AimTowardsCrosshair();
 
 	// Changes the HitLocation to match where the crosshair points at.
-	bool GetLineTraceHitLocation( FVector& out_HitLocation);
+	bool GetLineTraceHitLocation( FHitResult& out_HitResult);
 
 	// Hits the current object at SceneLocation based on the CollisionChannel
 	bool HitScanAtScreenPosition( FVector2D ScreenLocation, ECollisionChannel CollisionChannel, FHitResult& out_HitResult);

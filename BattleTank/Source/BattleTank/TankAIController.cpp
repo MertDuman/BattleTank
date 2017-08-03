@@ -2,7 +2,6 @@
 
 #include "TankAIController.h"
 #include "Engine/World.h"
-#include "Tank.h"
 #include "TankAimingComponent.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
@@ -14,21 +13,28 @@ ATankAIController::ATankAIController() {
 void ATankAIController::BeginPlay() {
 	Super::BeginPlay();
 
-	PlayerTank = Cast<ATank>( GetWorld()->GetFirstPlayerController()->GetPawn());
-	AITank = Cast<ATank>( GetPawn());
+	PlayerTank = GetWorld()->GetFirstPlayerController()->GetPawn();
+	AITank = GetPawn();
 }
 
 void ATankAIController::Tick(float DeltaTime) {
 	Super::Tick( DeltaTime);
 
-	if ( PlayerTank != nullptr) {
-		// Move towards player
-		MoveToActor( PlayerTank, AcceptanceRadius); // there is more to this method, but the defaults are fine
+	if (!ensure(PlayerTank && AITank)) { return; }
 
-		// Aim and fire towards the player
-		AITank->FindComponentByClass<UTankAimingComponent>()->AimAt(PlayerTank->GetActorLocation(), 10000); //TODO Fix magic number
-		AITank->Fire();
-	}
+	// Move towards player
+	MoveToActor( PlayerTank, AcceptanceRadius); // there is more to this method, but the defaults are fine
+
+	// Aim and fire towards the player
+	UTankAimingComponent* TankAimingComponent = AITank->FindComponentByClass<UTankAimingComponent>();
+	if ( !ensure(TankAimingComponent)) { return; }
+
+	// Needed because AimAt requires a FHitResult intead of an FVector
+	FHitResult HitResult;
+	HitResult.Location = PlayerTank->GetActorLocation();
+
+	TankAimingComponent->AimAt( HitResult);
+	TankAimingComponent->Fire();
 }
 
 
