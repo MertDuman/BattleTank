@@ -66,7 +66,7 @@ void UTankAimingComponent::Fire() {
 		Projectile->Launch( LaunchSpeed);
 
 		LastFireTime = GetWorld()->GetTimeSeconds();
-		AmmoCount -= 1;
+		AmmoCount--;
 	}
 }
 

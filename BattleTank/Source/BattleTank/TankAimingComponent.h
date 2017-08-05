@@ -67,6 +67,8 @@ private:
 	// Required for checking if barrel is moving.
 	FVector AimDirection;
 
+	// We need a UClass for SpawnActor. We could declare it as UClass, but that would mean any UClass could be used.
+	// We use TSubclassOf<AProjectile> which limits what you can choose.
 	UPROPERTY(EditAnywhere, Category = Setup)
 	TSubclassOf<AProjectile> ProjectileBlueprint;
 
