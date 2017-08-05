@@ -27,13 +27,13 @@ private:
 	virtual void Tick( float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere)
-	float CrosshairXLocation;
+	float CrosshairXLocation = 0.5f;
 
 	UPROPERTY(EditAnywhere)
-	float CrosshairYLocation; 
+	float CrosshairYLocation = 0.275f; 
 
 	UPROPERTY(EditAnywhere)
-	float LineTraceRange;
+	float LineTraceRange = 1000000.f; // 10km
 
 	// Start the tank moving the barrel towards crosshair
 	void AimTowardsCrosshair();

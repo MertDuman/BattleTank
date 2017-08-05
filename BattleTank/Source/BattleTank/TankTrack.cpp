@@ -5,7 +5,6 @@
 
 UTankTrack::UTankTrack() {
 	PrimaryComponentTick.bCanEverTick = true;
-	TrackMaxDrivingForce = 40000000; // 40.000kg, 500cm/s^2
 }
 
 void UTankTrack::BeginPlay() {
@@ -17,7 +16,6 @@ void UTankTrack::BeginPlay() {
 void UTankTrack::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit) {
 	DriveTrack();
 	ApplyCounterSlippageForce();
-	CurrentThrottle = 0;
 }
 
 void UTankTrack::ApplyCounterSlippageForce() {
@@ -38,14 +36,14 @@ void UTankTrack::SetThrottle(float Throttle) {
 }
 
 void UTankTrack::DriveTrack() {
-	UE_LOG(LogTemp, Warning, TEXT("%s: %f"), *GetName(), CurrentThrottle);
+	UE_LOG(LogTemp, Warning, TEXT("%f"), CurrentThrottle);
 	FVector ForceApplied = GetForwardVector() * CurrentThrottle * TrackMaxDrivingForce;
 	FVector ForceLocation = GetComponentLocation();
 
 	UStaticMeshComponent* TankRoot = Cast<UStaticMeshComponent>(GetOwner()->GetRootComponent());
 
 	TankRoot->AddForceAtLocation(ForceApplied, ForceLocation);
-	
+	CurrentThrottle = 0;
 }
 
 

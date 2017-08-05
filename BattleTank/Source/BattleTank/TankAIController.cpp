@@ -7,7 +7,7 @@
 #include "GameFramework/PlayerController.h"
 
 ATankAIController::ATankAIController() {
-	AcceptanceRadius = 3000;
+
 }
 
 void ATankAIController::BeginPlay() {
@@ -34,7 +34,10 @@ void ATankAIController::Tick(float DeltaTime) {
 	HitResult.Location = PlayerTank->GetActorLocation();
 
 	TankAimingComponent->AimAt( HitResult);
-	TankAimingComponent->Fire();
+
+	if (!TankAimingComponent->IsBarrelMoving()) {
+		TankAimingComponent->Fire();
+	}
 }
 
 

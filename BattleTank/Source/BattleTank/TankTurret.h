@@ -22,6 +22,6 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-	float MaxTurnSpeedDegrees;
+	float MaxTurnSpeedDegrees = 30.f;
 	
 };

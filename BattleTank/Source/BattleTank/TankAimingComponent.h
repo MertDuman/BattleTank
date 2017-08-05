@@ -14,7 +14,8 @@ UENUM()
 enum class EFiringState : uint8 {
 	Reloading,
 	Aiming,
-	Locked
+	Locked,
+	OutOfAmmo
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -37,6 +38,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Setup)
 	void Initialize(UTankBarrel* BarrelToSet, UTankTurret* TurretToSet);
 
+	UFUNCTION(BlueprintCallable, Category = Firing)
+	int32 GetAmmoCount() const;
+
+	// For AI Tank use. AI Tanks will only fire if barrel isn't moving (with a tolerance)
+	bool IsBarrelMoving() const;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -44,23 +51,30 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = State)
 	EFiringState FiringState = EFiringState::Reloading;
 
-	bool bIsReloaded;
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	int32 AmmoCount = 5;
+
+	bool bIsReloaded = true;
 
 private:
 	UTankBarrel* Barrel = nullptr;
 
 	UTankTurret* Turret = nullptr;
 
+	// Required for setting firing state.
 	FHitResult HitResult;
+
+	// Required for checking if barrel is moving.
+	FVector AimDirection;
 
 	UPROPERTY(EditAnywhere, Category = Setup)
 	TSubclassOf<AProjectile> ProjectileBlueprint;
 
 	UPROPERTY(EditAnywhere, Category = Firing)
-	float LaunchSpeed;
+	float LaunchSpeed = 10000.f;
 
 	UPROPERTY(EditAnywhere, Category = Firing)
-	float ReloadSpeedInSeconds;
+	float ReloadSpeedInSeconds = 2.f;
 
 	float LastFireTime;
 

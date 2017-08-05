@@ -23,16 +23,16 @@ public:
 private:
 	virtual void BeginPlay() override;
 
+	float CurrentThrottle = 0;
+
+	UPROPERTY(EditDefaultsOnly)
+	float TrackMaxDrivingForce = 40000000;
+
 	// Makes the tank movement more natural. Tanks don't strafe.
 	void ApplyCounterSlippageForce();
 
 	// Applies force to tracks depending on the current throttle and then resets it.
 	void DriveTrack();
-
-	float CurrentThrottle = 0;
-
-	UPROPERTY(EditDefaultsOnly)
-	float TrackMaxDrivingForce;
 
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);

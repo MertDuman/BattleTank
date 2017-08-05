@@ -5,9 +5,7 @@
 
 
 UTankBarrel::UTankBarrel() {
-	MaxDegreesPerSecond = 10.f;
-	MaxElevationDegrees = 40.f;
-	MinElevationDegrees = 0.f;
+
 }
 
 void UTankBarrel::Elevate(float RelativeSpeed) {

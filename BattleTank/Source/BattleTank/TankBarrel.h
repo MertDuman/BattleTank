@@ -23,12 +23,12 @@ public:
 private:
 	/// Default values are in constructor
 	UPROPERTY(EditAnywhere, Category = Setup)
-	float MaxDegreesPerSecond;
+	float MaxDegreesPerSecond = 10.f;
 
 	UPROPERTY(EditAnywhere, Category = Setup)
-	float MaxElevationDegrees;
+	float MaxElevationDegrees = 40.f;
 
 	UPROPERTY(EditAnywhere, Category = Setup)
-	float MinElevationDegrees;
+	float MinElevationDegrees = 0.f;
 	
 };

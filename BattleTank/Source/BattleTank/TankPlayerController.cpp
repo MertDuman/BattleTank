@@ -6,9 +6,7 @@
 #include "DrawDebugHelpers.h"
 
 ATankPlayerController::ATankPlayerController() {
-	CrosshairXLocation = 0.5f;
-	CrosshairYLocation = 0.275f;
-	LineTraceRange = 1000000.f; // 10km
+
 }
 
 void ATankPlayerController::BeginPlay() {
