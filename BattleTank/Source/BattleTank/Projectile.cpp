@@ -33,8 +33,6 @@ AProjectile::AProjectile()
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(FName("Projectile Movement"));
 	MovementComponent->bAutoActivate = false;
 	MovementComponent->bRotationFollowsVelocity = true;
-
-	bAutoDestroyWhenFinished = true;
 }
 
 // Called when the game starts or when spawned
@@ -78,7 +76,6 @@ void AProjectile::OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor,
 		true,
 		ECollisionChannel::ECC_Visibility
 	);
-	
 }
 
 void AProjectile::Launch(float Speed) {

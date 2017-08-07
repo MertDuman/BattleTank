@@ -6,6 +6,10 @@
 #include "GameFramework/Pawn.h"
 #include "Tank.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTankDelegate);
+
+class UParticleSystemComponent;
+
 UCLASS()
 class BATTLETANK_API ATank : public APawn
 {
@@ -20,8 +24,21 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const &DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
+	FTankDelegate OnDeath;
+	
 	UFUNCTION(BlueprintCallable, Category = Health)
 	float GetHealthPercent() const;
+
+	UFUNCTION(BlueprintCallable, Category = Health)
+	int32 GetMaxHealth() const;
+
+	UFUNCTION(BlueprintCallable, Category = Health)
+	int32 GetCurrentHealth() const;
+
+	UFUNCTION(BlueprintCallable, Category = Setup)
+	void SetDeathExplosion(UParticleSystemComponent* DeathExplosionToSet);
+
+	void ActivateDeathExplosion();
 
 protected:
 	// Called when the game starts or when spawned
@@ -32,6 +49,9 @@ private:
 	int32 MaxHealth = 100;
 
 	UPROPERTY(VisibleAnywhere, Category = Health)
-	int32 CurrentHealth = MaxHealth;
+	int32 CurrentHealth;
+
+	UPROPERTY(VisibleAnywhere, Category = Health)
+	UParticleSystemComponent* DeathExplosion = nullptr;
 
 };
