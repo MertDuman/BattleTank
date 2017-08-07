@@ -6,7 +6,6 @@
 #include "TankBarrel.h"
 #include "TankTurret.h"
 #include "Tank.h"
-#include "Regex.h"
 #include "Projectile.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"

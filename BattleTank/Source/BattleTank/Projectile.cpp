@@ -16,8 +16,12 @@ AProjectile::AProjectile()
 	SetRootComponent(CollisionMesh);
 	CollisionMesh->SetNotifyRigidBodyCollision(true); // Sets generate hit events' default value to true.
 
-	LaunchBlast = CreateDefaultSubobject<UParticleSystemComponent>(FName("Particle System"));
-	LaunchBlast->AttachTo(RootComponent);
+	ImpactBlast = CreateDefaultSubobject<UParticleSystemComponent>(FName("Impact Blast"));
+	ImpactBlast->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	ImpactBlast->bAutoActivate = false;
+
+	LaunchBlast = CreateDefaultSubobject<UParticleSystemComponent>(FName("Launch Blast"));
+	LaunchBlast->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(FName("Projectile Movement"));
 	MovementComponent->bAutoActivate = false;

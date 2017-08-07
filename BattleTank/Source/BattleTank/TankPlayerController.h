@@ -19,7 +19,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	// Can't use MULTICAST_DELEGATE becauuse that only works for Actors. Also no need for implementation because of the macro.
+	// Can't use MULTICAST_DELEGATE because that only works for Actors. Also no need for implementation because of the macro.
 	UFUNCTION(BlueprintImplementableEvent, Category = Setup)
 	void FoundAimingComponent(UTankAimingComponent* AimingComponent);
 
