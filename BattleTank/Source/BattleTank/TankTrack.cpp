@@ -33,6 +33,7 @@ void UTankTrack::ApplyCounterSlippageForce() {
 void UTankTrack::SetThrottle(float Throttle) {
 	CurrentThrottle = FMath::Clamp(CurrentThrottle + Throttle, -1.f, 1.f);
 	DriveTrack();
+	
 }
 
 void UTankTrack::DriveTrack() {
