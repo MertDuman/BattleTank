@@ -32,7 +32,10 @@ protected:
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 
 private:
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere, Category = Damage)
+	float ProjectileDamage = 20.f;
+
+	UPROPERTY(VisibleAnywhere, Category = Components)
 	UProjectileMovementComponent* MovementComponent = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = Components)

@@ -24,5 +24,16 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+float ATank::GetHealthPercent() const {
+	return (float)CurrentHealth / (float)MaxHealth;
+}
+
+float ATank::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) {
+	int32 DamageToApply = FMath::Clamp(FMath::RoundToInt( DamageAmount), 0, CurrentHealth);
+	CurrentHealth -= DamageToApply;
+	UE_LOG(LogTemp, Warning, TEXT("DamageAmount:%f, DamageToApply:%i"), DamageAmount, DamageToApply)
+	return DamageToApply;
+}
+
 
 

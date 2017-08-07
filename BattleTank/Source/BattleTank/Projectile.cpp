@@ -2,8 +2,10 @@
 
 #include "Projectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "GameFramework/DamageType.h"
 #include "Components/StaticMeshComponent.h"
 #include "PhysicsEngine/RadialForceComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 
 
@@ -49,6 +51,8 @@ void AProjectile::Tick(float DeltaTime)
 }
 
 void AProjectile::OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit) {
+	// All of these, except SetRootComponent, could be done in Blueprint.
+	
 	ImpactBlast->Activate();
 	LaunchBlast->Deactivate();
 	ExplosionForce->FireImpulse();
@@ -59,8 +63,22 @@ void AProjectile::OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor,
 
 	// Destroy the projectile after 2.5f seconds to improve performance.
 	SetLifeSpan( 2.5f);
-
 	//GetWorld()->GetTimerManager().SetTimer() would be used to call a method every X seconds.
+
+	// Calls TakeDamage on all the actors caught in the radius.
+	UGameplayStatics::ApplyRadialDamage(
+		this,
+		ProjectileDamage,
+		GetActorLocation(),
+		ExplosionForce->Radius,
+		UDamageType::StaticClass(),
+		TArray<AActor*>(),
+		this,
+		this->GetInstigatorController(),
+		true,
+		ECollisionChannel::ECC_Visibility
+	);
+	
 }
 
 void AProjectile::Launch(float Speed) {
