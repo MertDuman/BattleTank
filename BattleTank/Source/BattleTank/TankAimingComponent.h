@@ -83,4 +83,8 @@ private:
 	void MoveBarrelTowards( FVector AimDirection);
 
 	void MoveTurretTowards( FVector AimDirection);
+
+	void FireMortarProjectiles();
+
+	void FireTankProjectile();
 };

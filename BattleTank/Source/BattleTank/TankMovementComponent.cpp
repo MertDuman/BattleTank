@@ -14,18 +14,25 @@ void UTankMovementComponent::Initialize(UTankTrack* LeftTrackToSet, UTankTrack* 
 	RightTrack = RightTrackToSet;
 }
 
-void UTankMovementComponent::IntendMoveForward(float Throw) {
+void UTankMovementComponent::IntendMoveForward(float Throttle) {
 	if (!ensure(LeftTrack && RightTrack)) { return; }
 
-	LeftTrack->SetThrottle( Throw);
-	RightTrack->SetThrottle( Throw);
+	LeftTrack->SetThrottle( Throttle);
+	RightTrack->SetThrottle( Throttle);
 }
 
-void UTankMovementComponent::IntendTurnRight(float Throw) {
+void UTankMovementComponent::IntendTurnRight(float Throttle) {
 	if (!ensure(LeftTrack && RightTrack)) { return; }
 
-	LeftTrack->SetThrottle( Throw);
-	RightTrack->SetThrottle( -Throw);
+	LeftTrack->SetThrottle( Throttle);
+	RightTrack->SetThrottle( -Throttle);
+}
+
+void UTankMovementComponent::IntendStop() {
+	if (!ensure(LeftTrack && RightTrack)) { return; }
+
+	LeftTrack->ResetThrottle();
+	RightTrack->ResetThrottle();
 }
 
 void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, bool bForceMaxSpeed) {

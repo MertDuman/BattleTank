@@ -20,10 +20,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Input)
 	void SetThrottle( float Throttle);
 
+	UPROPERTY(BlueprintReadWrite, Category = Input)
+	float CurrentThrottle = 0;
+
+	void ResetThrottle();
 private:
 	virtual void BeginPlay() override;
-
-	float CurrentThrottle = 0;
 
 	UPROPERTY(EditDefaultsOnly)
 	float TrackMaxDrivingForce = 40000000;

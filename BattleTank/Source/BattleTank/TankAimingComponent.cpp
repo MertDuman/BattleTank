@@ -6,8 +6,10 @@
 #include "TankBarrel.h"
 #include "TankTurret.h"
 #include "Tank.h"
+#include "Mortar.h"
 #include "Projectile.h"
 #include "Engine/World.h"
+#include "DrawDebugHelpers.h"
 #include "GameFramework/PlayerController.h"
 
 
@@ -28,22 +30,21 @@ void UTankAimingComponent::BeginPlay()
 }
 
 // Called every frame
-void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
+void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	bIsReloaded = GetWorld()->GetTimeSeconds() - LastFireTime > ReloadSpeedInSeconds;
-	bool bIsTank = false;
+	bool bIsEnemy = false;
 
 	if (HitResult.GetActor() != nullptr) {
-		bIsTank = HitResult.GetActor()->GetClass()->IsChildOf<ATank>();
+		bIsEnemy = HitResult.GetActor()->GetClass()->IsChildOf<ATank>() || HitResult.GetActor()->GetClass()->IsChildOf<AMortar>();
 	}
 
 	if (AmmoCount <= 0) {
 		FiringState = EFiringState::OutOfAmmo;
-	} else if ( !bIsReloaded) {
+	} else if (!bIsReloaded) {
 		FiringState = EFiringState::Reloading;
-	} else if ( bIsTank) {
+	} else if (bIsEnemy) {
 		FiringState = EFiringState::Locked;
 	} else {
 		FiringState = EFiringState::Aiming;
@@ -54,15 +55,12 @@ void UTankAimingComponent::Fire() {
 	if (!ensure(Barrel)) { return; }
 	if (!ensure(ProjectileBlueprint)) { return; }
 
-	if ( bIsReloaded && AmmoCount > 0) {
-		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
-			ProjectileBlueprint,
-			Barrel->GetSocketLocation(FName("Projectile")),
-			Barrel->GetSocketRotation(FName("Projectile"))
-		);
-
-		if (!ensure(Projectile)) { return; }
-		Projectile->Launch( LaunchSpeed);
+	if (bIsReloaded && AmmoCount > 0) {
+		if (GetOwner()->GetClass()->IsChildOf<ATank>()) {
+			FireTankProjectile();
+		} else if (GetOwner()->GetClass()->IsChildOf<AMortar>()) {
+			FireMortarProjectiles();
+		}
 
 		LastFireTime = GetWorld()->GetTimeSeconds();
 		AmmoCount--;
@@ -70,49 +68,64 @@ void UTankAimingComponent::Fire() {
 }
 
 void UTankAimingComponent::AimAt(FHitResult HitResult) {
-	if ( !ensure(Barrel)) { return; }
-	if ( !ensure(Turret)) { return; }
+	if (!ensure(Barrel)) { return; }
+	if (!ensure(Turret)) { return; }
 
 	this->HitResult = HitResult;
 
 	FVector LaunchVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("Projectile"));
+	bool AimLocationFound;
 
 	// Gets a velocity vector to see where to aim at.
-	bool AimLocationFound = UGameplayStatics::SuggestProjectileVelocity(
-		this,
-		LaunchVelocity,
-		StartLocation,
-		HitResult.Location,
-		LaunchSpeed,
-		false,
-		0.f,
-		0.f,
-		ESuggestProjVelocityTraceOption::DoNotTrace
-	);
+	if (GetOwner()->GetClass()->IsChildOf<AMortar>()) {
+		AimLocationFound = UGameplayStatics::SuggestProjectileVelocity(
+			this,
+			LaunchVelocity,
+			StartLocation,
+			HitResult.Location,
+			LaunchSpeed,
+			false, // Aim high with mortar
+			0.f,
+			0.f,
+			ESuggestProjVelocityTraceOption::DoNotTrace
+		);
+	} else {
+		AimLocationFound = UGameplayStatics::SuggestProjectileVelocity(
+			this,
+			LaunchVelocity,
+			StartLocation,
+			HitResult.Location,
+			LaunchSpeed,
+			false,
+			0.f,
+			0.f,
+			ESuggestProjVelocityTraceOption::DoNotTrace
+		);
+	}
 
 	AimDirection = LaunchVelocity.GetSafeNormal();
 
-	if ( AimLocationFound) {
+	if (AimLocationFound) {
 		MoveBarrelTowards(AimDirection);
 		MoveTurretTowards(AimDirection);
 	}
-	
+
 }
 
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection) {
-	if ( !ensure(Barrel)) { return; }
+	if (!ensure(Barrel)) { return; }
 
 	FRotator BarrelRotator = Barrel->GetComponentRotation();
 	FRotator AimAsRotator = AimDirection.Rotation();
 	FRotator DeltaRotator = AimAsRotator - BarrelRotator;
-	
+
 	Barrel->Elevate(DeltaRotator.Pitch);
 }
 
 void UTankAimingComponent::MoveTurretTowards(FVector AimDirection) {
-	if ( !ensure(Turret)) { return; }
-
+	if (!ensure(Turret)) { return; }
+	
 	FRotator TurretRotator = Turret->GetComponentRotation();
 	FRotator AimAsRotator = AimDirection.Rotation();
 	FRotator DeltaRotator = AimAsRotator - TurretRotator;
@@ -123,6 +136,46 @@ void UTankAimingComponent::MoveTurretTowards(FVector AimDirection) {
 		Turret->Move(-DeltaRotator.Yaw);
 	}
 	
+}
+
+void UTankAimingComponent::FireMortarProjectiles() {
+	AProjectile* Projectile1 = GetWorld()->SpawnActor<AProjectile>(
+		ProjectileBlueprint,
+		Barrel->GetSocketLocation(FName("Projectile1")),
+		Barrel->GetSocketRotation(FName("Projectile1"))
+		);
+
+	AProjectile* Projectile2 = GetWorld()->SpawnActor<AProjectile>(
+		ProjectileBlueprint,
+		Barrel->GetSocketLocation(FName("Projectile2")),
+		Barrel->GetSocketRotation(FName("Projectile2"))
+		);
+
+	AProjectile* Projectile3 = GetWorld()->SpawnActor<AProjectile>(
+		ProjectileBlueprint,
+		Barrel->GetSocketLocation(FName("Projectile3")),
+		Barrel->GetSocketRotation(FName("Projectile3"))
+		);
+
+	if (!ensure(Projectile1)) { return; }
+	Projectile1->Launch(LaunchSpeed);
+
+	if (!ensure(Projectile2)) { return; }
+	Projectile2->Launch(LaunchSpeed);
+
+	if (!ensure(Projectile3)) { return; }
+	Projectile3->Launch(LaunchSpeed);
+}
+
+void UTankAimingComponent::FireTankProjectile() {
+	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
+		ProjectileBlueprint,
+		Barrel->GetSocketLocation(FName("Projectile")),
+		Barrel->GetSocketRotation(FName("Projectile"))
+		);
+
+	if (!ensure(Projectile)) { return; }
+	Projectile->Launch(LaunchSpeed);
 }
 
 bool UTankAimingComponent::IsBarrelMoving() const {
