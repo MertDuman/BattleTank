@@ -58,12 +58,14 @@ void UTankAimingComponent::Fire() {
 	if (bIsReloaded && AmmoCount > 0) {
 		if (GetOwner()->GetClass()->IsChildOf<ATank>()) {
 			FireTankProjectile();
+			AmmoCount--;
 		} else if (GetOwner()->GetClass()->IsChildOf<AMortar>()) {
 			FireMortarProjectiles();
+			AmmoCount -= 3;
 		}
 
 		LastFireTime = GetWorld()->GetTimeSeconds();
-		AmmoCount--;
+		
 	}
 }
 
@@ -78,31 +80,17 @@ void UTankAimingComponent::AimAt(FHitResult HitResult) {
 	bool AimLocationFound;
 
 	// Gets a velocity vector to see where to aim at.
-	if (GetOwner()->GetClass()->IsChildOf<AMortar>()) {
-		AimLocationFound = UGameplayStatics::SuggestProjectileVelocity(
-			this,
-			LaunchVelocity,
-			StartLocation,
-			HitResult.Location,
-			LaunchSpeed,
-			false, // Aim high with mortar
-			0.f,
-			0.f,
-			ESuggestProjVelocityTraceOption::DoNotTrace
-		);
-	} else {
-		AimLocationFound = UGameplayStatics::SuggestProjectileVelocity(
-			this,
-			LaunchVelocity,
-			StartLocation,
-			HitResult.Location,
-			LaunchSpeed,
-			false,
-			0.f,
-			0.f,
-			ESuggestProjVelocityTraceOption::DoNotTrace
-		);
-	}
+	AimLocationFound = UGameplayStatics::SuggestProjectileVelocity(
+		this,
+		LaunchVelocity,
+		StartLocation,
+		HitResult.Location,
+		LaunchSpeed,
+		false,
+		0.f,
+		0.f,
+		ESuggestProjVelocityTraceOption::DoNotTrace
+	);
 
 	AimDirection = LaunchVelocity.GetSafeNormal();
 
@@ -182,7 +170,7 @@ bool UTankAimingComponent::IsBarrelMoving() const {
 	if ( !ensure(Barrel)) { return false; }
 
 	FVector BarrelForward = Barrel->GetForwardVector();
-	return !BarrelForward.Equals( AimDirection, 0.1);
+	return !BarrelForward.Equals( AimDirection, 0.01);
 }
 
 int32 UTankAimingComponent::GetAmmoCount() const {

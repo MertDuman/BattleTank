@@ -24,13 +24,10 @@ public:
 	void Initialize( UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet);
 
 	UFUNCTION(BlueprintCallable, Category = Input)
-	void IntendMoveForward( float Throttle);
+	void IntendMove( float Throttle);
 
 	UFUNCTION(BlueprintCallable, Category = Input)
-	void IntendTurnRight(float Throttle);
-
-	UFUNCTION(BlueprintCallable, Category = Input)
-	void IntendStop();
+	void IntendTurn(float Throttle);
 
 private:
 	UTankTrack* LeftTrack = nullptr;

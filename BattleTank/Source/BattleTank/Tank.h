@@ -45,7 +45,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = Health)
+	UPROPERTY(EditAnywhere, Category = Health)
 	int32 MaxHealth = 100;
 
 	UPROPERTY(VisibleAnywhere, Category = Health)

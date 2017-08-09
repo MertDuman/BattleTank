@@ -1,6 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankTrack.h"
+#include "GameFramework/Controller.h"
+#include "TankAIController.h"
+#include "DrawDebugHelpers.h"
 #include "Engine/World.h"
 
 UTankTrack::UTankTrack() {
@@ -14,8 +17,7 @@ void UTankTrack::BeginPlay() {
 }
 
 void UTankTrack::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit) {
-	DriveTrack();
-	ApplyCounterSlippageForce();
+	
 }
 
 void UTankTrack::ApplyCounterSlippageForce() {
@@ -31,22 +33,36 @@ void UTankTrack::ApplyCounterSlippageForce() {
 	TankRoot->AddForce(SlippageCounterForce);
 }
 
-void UTankTrack::SetThrottle(float Throttle) {
-	CurrentThrottle = FMath::Clamp(CurrentThrottle + Throttle, -2.f, 2.f);
-	UE_LOG(LogTemp, Warning, TEXT("%f"), CurrentThrottle)
+void UTankTrack::DriveTrack(float Direction) {
+	FVector ForceApplied = GetForwardVector() * Direction * TrackMaxDrivingForce;
+	FVector ForceLocation = GetComponentLocation() + (GetForwardVector() * -300) + (GetUpVector() * 75);
+	UStaticMeshComponent* TankRoot = Cast<UStaticMeshComponent>(GetOwner()->GetRootComponent());
+	
+	if (IsOnObjectLineTrace()) {
+		TankRoot->AddForceAtLocation(ForceApplied, ForceLocation);
+		ApplyCounterSlippageForce();
+	}
 }
 
-void UTankTrack::DriveTrack() {
-	FVector ForceApplied = GetForwardVector() * CurrentThrottle * TrackMaxDrivingForce;
-	FVector ForceLocation = GetComponentLocation();
-
+void UTankTrack::Turn(float Direction) {
+	FVector ForceApplied = GetRightVector() * Direction * TrackMaxDrivingForce / 2;
+	FVector ForceLocation = GetComponentLocation() + (GetForwardVector() * 200) + (GetUpVector() * 75);
 	UStaticMeshComponent* TankRoot = Cast<UStaticMeshComponent>(GetOwner()->GetRootComponent());
 
-	TankRoot->AddForceAtLocation(ForceApplied, ForceLocation);
+	if (IsOnObjectLineTrace()) {
+		TankRoot->AddForceAtLocation(ForceApplied, ForceLocation);
+	}
 }
 
-void UTankTrack::ResetThrottle() {
-	CurrentThrottle = 0;
+bool UTankTrack::IsOnObjectLineTrace() {
+	FHitResult HitResult;
+	return GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		GetComponentLocation(),
+		GetComponentLocation() + (GetUpVector() * -100),
+		ECollisionChannel::ECC_Camera,
+		FCollisionQueryParams::DefaultQueryParam
+	);
 }
 
 

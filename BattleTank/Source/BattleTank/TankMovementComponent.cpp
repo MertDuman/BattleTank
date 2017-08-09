@@ -14,25 +14,18 @@ void UTankMovementComponent::Initialize(UTankTrack* LeftTrackToSet, UTankTrack* 
 	RightTrack = RightTrackToSet;
 }
 
-void UTankMovementComponent::IntendMoveForward(float Throttle) {
+void UTankMovementComponent::IntendMove(float Throttle) {
 	if (!ensure(LeftTrack && RightTrack)) { return; }
 
-	LeftTrack->SetThrottle( Throttle);
-	RightTrack->SetThrottle( Throttle);
+	LeftTrack->DriveTrack( Throttle);
+	RightTrack->DriveTrack( Throttle);
 }
 
-void UTankMovementComponent::IntendTurnRight(float Throttle) {
+void UTankMovementComponent::IntendTurn(float Throttle) {
 	if (!ensure(LeftTrack && RightTrack)) { return; }
 
-	LeftTrack->SetThrottle( Throttle);
-	RightTrack->SetThrottle( -Throttle);
-}
-
-void UTankMovementComponent::IntendStop() {
-	if (!ensure(LeftTrack && RightTrack)) { return; }
-
-	LeftTrack->ResetThrottle();
-	RightTrack->ResetThrottle();
+	LeftTrack->Turn( Throttle);
+	RightTrack->Turn( Throttle);
 }
 
 void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, bool bForceMaxSpeed) {
@@ -46,6 +39,6 @@ void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, boo
 	// CrossProductResult.Z gives us the sign of sine since other vectors are of length 1.
 	FVector CrossProductResult = FVector::CrossProduct( AITankForwardLoc, AITankMovementLoc);
 
-	IntendMoveForward(CosineValue);
-	IntendTurnRight(CrossProductResult.Z);
+	IntendMove(CosineValue);
+	IntendTurn(CrossProductResult.Z);
 }

@@ -17,26 +17,24 @@ class BATTLETANK_API UTankTrack : public UStaticMeshComponent
 public:
 	UTankTrack();
 
-	UFUNCTION(BlueprintCallable, Category = Input)
-	void SetThrottle( float Throttle);
+	// Applies force to the back of the tank to simulate back tire driving. Positive for forward and negative for backwards.
+	void DriveTrack(float Direction);
 
-	UPROPERTY(BlueprintReadWrite, Category = Input)
-	float CurrentThrottle = 0;
+	// Applies force to the front of the tank to simulate front tire turning. Positive for right and negative for left.
+	void Turn(float Direction);
 
-	void ResetThrottle();
 private:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly)
-	float TrackMaxDrivingForce = 40000000;
+	float TrackMaxDrivingForce = 30000000;
 
 	// Makes the tank movement more natural. Tanks don't strafe.
 	void ApplyCounterSlippageForce();
 
-	// Applies force to tracks depending on the current throttle and then resets it.
-	void DriveTrack();
+	// Line trace to the bottom of the tank to see if it is on an object.
+	bool IsOnObjectLineTrace();
 
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
-	
 };
