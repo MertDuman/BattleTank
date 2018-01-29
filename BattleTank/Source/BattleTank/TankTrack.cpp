@@ -56,6 +56,7 @@ void UTankTrack::Turn(float Direction) {
 
 bool UTankTrack::IsOnObjectLineTrace() {
 	FHitResult HitResult;
+
 	return GetWorld()->LineTraceSingleByChannel(
 		HitResult,
 		GetComponentLocation(),
